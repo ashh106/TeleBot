@@ -97,6 +97,4 @@ webencodings==0.5.1
 websocket-client==1.8.0
 widgetsnbextension==4.0.13
 
-pywinpty==2.0.14; sys_platform == "win32"
-
 python-telegram-bot
