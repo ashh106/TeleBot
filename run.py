@@ -3,7 +3,7 @@ from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, ChatMember
 from telegram.ext import (ApplicationBuilder, CommandHandler, ConversationHandler,
                           MessageHandler, filters, CallbackContext, ChatMemberHandler)
 from Ustatus import UserStatus
-from config import BOT_TOKEN, ADMIN_ID
+from config import ADMIN_UN, BOT_TOKEN, ADMIN_ID
 import db_connect
 
 logging.basicConfig(
@@ -39,11 +39,12 @@ async def start(update: Update, context: CallbackContext) -> int:
     """
     await update.message.reply_text(
         "👋 Welcome to the ChatBot!\n\n"
-        "🔹 Use the commands below to interact:\n"
-        "➡ /chat - Start searching for a partner\n"
-        "➡ /exit - Leave the chat\n"
-        "➡ /newchat - Find a new partner\n"
-        "➡ /stats - View bot statistics (Admin only)",
+        " Use the commands below to interact:\n"
+        " /chat - Start searching for a partner\n"
+        " /exit - Leave the chat\n"
+        " /newchat - Find a new partner\n"
+        " /stats - View bot statistics (Admin only)\n\n"
+        "Share the bot with your friend to get reward points",
         reply_markup=command_keyboard
     )
 
@@ -68,8 +69,15 @@ async def handle_chat(update: Update, context: CallbackContext) -> None:
         # Try to find a match
         partner_id = db_connect.couple(current_user_id=user_id)
         if partner_id:
-            await context.bot.send_message(chat_id=user_id, text="🤖 You have been paired with a user!")
-            await context.bot.send_message(chat_id=partner_id, text="🤖 You have been paired with a user!")
+            await context.bot.send_message(chat_id=user_id, text=
+                                            "🤖 You have been paired with a user!\n"
+                                            " /chat - Start searching for a partner\n"
+                                            " /exit - Leave the chat\n"
+                                           )
+            await context.bot.send_message(chat_id=partner_id, text=
+                                            "🤖 You have been paired with a user!\n"
+                                            " /chat - Start searching for a partner\n"
+                                            " /exit - Leave the chat\n")
     elif user_status == UserStatus.IN_SEARCH:
         await update.message.reply_text("🤖 You are already searching for a partner.")
     elif user_status == UserStatus.COUPLED:
@@ -82,16 +90,16 @@ async def handle_exit_chat(update: Update, context: CallbackContext) -> None:
     """
     user_id = update.effective_user.id
     if db_connect.get_user_status(user_id=user_id) != UserStatus.COUPLED:
-        await update.message.reply_text("🤖 You are not in a chat!")
+        await update.message.reply_text("🤖 You are not in a chat!type /chat to Start searching.")
         return
 
     partner_id = db_connect.get_partner_id(user_id)
     if partner_id:
         db_connect.uncouple(user_id=user_id)
-        await update.message.reply_text("🤖 You have left the chat.")
+        await update.message.reply_text("🤖 You have left the chat! type /newchat - For new chat.")
         await context.bot.send_message(chat_id=partner_id, text="🤖 Your partner has left. Type /chat to find a new partner.")
     else:
-        await update.message.reply_text("🤖 Error: Could not find your partner!")
+        await update.message.reply_text("🤖 Error: Could not find your partner! type /start ")
 
 
 async def handle_newchat(update: Update, context: CallbackContext) -> None:
@@ -107,7 +115,7 @@ async def handle_stats(update: Update, context: CallbackContext) -> None:
     Handles the /stats command, showing bot statistics for admin users.
     """
     user_id = update.effective_user.id
-    if user_id != ADMIN_ID:
+    if user_id != ADMIN_UN:
         await update.message.reply_text("⚠ You are not authorized to view bot statistics.")
         return
 
@@ -129,7 +137,7 @@ async def handle_message(update: Update, context: CallbackContext) -> None:
     if db_connect.get_user_status(user_id) == UserStatus.COUPLED and partner_id:
         await context.bot.copy_message(chat_id=partner_id, from_chat_id=user_id, message_id=update.message.message_id)
     else:
-        await update.message.reply_text("🤖 You are not in a chat. Type /chat to start searching!")
+        await update.message.reply_text("🤖 Searching for a partner...")
 
 
 def is_bot_blocked(update: Update) -> bool:
