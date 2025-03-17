@@ -28,14 +28,6 @@ def insert_user(user_id):
     conn.commit()
     conn.close()
 
-def get_user_gender(user_id):
-    conn = sqlite3.connect("your_database.db")  # Change to your actual DB file
-    c = conn.cursor()
-    c.execute("SELECT gender FROM users WHERE user_id = ?", (user_id,))
-    result = c.fetchone()
-    conn.close()
-    return result[0] if result else None  # Handle case if user is not found
-
 
 def remove_user(user_id):
     # If a user disconnects, remove him/her from the users table
@@ -61,13 +53,7 @@ def get_user_status(user_id):
     c = conn.cursor()
     # Get the status of the user
     c.execute("SELECT status FROM users WHERE user_id=?", (user_id,))
-
-    result = c.fetchone()
-    if result:
-        status = result[0]
-    else:
-        status = "inactive"  # Or some default status
-
+    status = c.fetchone()[0]
     conn.close()
     return status
 
