@@ -2,6 +2,20 @@ import sqlite3
 from Ustatus import UserStatus
 
 
+conn = sqlite3.connect("chatbot_database.db")
+c = conn.cursor()
+
+# Check table structure
+c.execute("PRAGMA table_info(users);")
+columns = c.fetchall()
+
+print("Table Structure:")
+for column in columns:
+    print(column)  # Prints column details
+
+conn.close()
+
+
 def create_db():
     # Connect to the chatbot database
     conn = sqlite3.connect('chatbot_database.db')
@@ -13,18 +27,19 @@ def create_db():
 
 
 def insert_user(user_id):
-    # Connect to the chatbot database
     conn = sqlite3.connect('chatbot_database.db')
     c = conn.cursor()
-    # Check if the user is already in the users table
+    
     c.execute("SELECT * FROM users WHERE user_id=?", (user_id,))
     if c.fetchone():
-        # If the user is already in the users table, do nothing
         conn.close()
-        return
+        return  # User already exists, so exit function
 
-    # Otherwise, insert the user into the users table
-    c.execute("INSERT INTO users VALUES (?, ?, ?)", (user_id, UserStatus.IDLE, None))  # No partner_id initially
+    default_gender = "Unknown"  # Default gender value
+
+    # Insert the correct number of values (4)
+    c.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (user_id, UserStatus.IDLE, None, default_gender))
+
     conn.commit()
     conn.close()
 

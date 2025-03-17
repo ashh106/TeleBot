@@ -1,4 +1,8 @@
+# add menu - change stats - add gender - 
+
+
 import logging
+import sqlite3
 from telegram import Update, ChatMember
 from telegram.ext import (filters, ApplicationBuilder, ContextTypes, CommandHandler, ConversationHandler,
                           MessageHandler, ChatMemberHandler)
@@ -29,7 +33,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     :return: status USER_ACTION
     """
     await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text="Welcome to this ChatBot! 🤖\nType /chat to start searching for a partner")
+                                   text="Welcome to this ChatBot! 🤖\n"
+                                   "Type /chat to find a match\n"
+                                   "Type /menu to go to menu\n"
+                                   "Type /exit to stop search\n")
 
     # Insert the user into the database, if not already present (check is done in the function)
     user_id = update.effective_user.id
@@ -141,8 +148,12 @@ async def start_search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     other_user_id = db_connect.couple(current_user_id=current_user_id)
     # If a partner is found, notify both the users
     if other_user_id is not None:
-        await context.bot.send_message(chat_id=current_user_id, text="🤖 You have been paired with an user")
-        await context.bot.send_message(chat_id=other_user_id, text="🤖 You have been paired with an user")
+        await context.bot.send_message(chat_id=current_user_id, text="Match found 🤖! \n"
+                                                                     "/newchat — find a new chat\n"
+                                                                     "/exit — leave this chat")
+        await context.bot.send_message(chat_id=other_user_id, text="Match found 🤖! \n"
+                                                                    "/newchat — find a new chat\n"
+                                                                    "/exit — leave this chat")
 
     return
 
@@ -200,9 +211,10 @@ async def exit_chat(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     await context.bot.send_message(chat_id=current_user, text="🤖 Ending chat...")
     await context.bot.send_message(chat_id=other_user,
-                                   text="🤖 Your partner has left the chat, type /chat to start searching for a new "
-                                        "partner.")
-    await update.message.reply_text("🤖 You have left the chat.")
+                                   text="🤖 Your partner has left the chat,\n" 
+                                     "type /chat to find a new match")
+    await update.message.reply_text("🤖 You have left the chat.\n"
+                                    "type /chat to find new a match")
 
     return
 
