@@ -1,4 +1,4 @@
-# add menu - change stats - add gender - 
+# add menu - change stats - add gender - add a welcomme message /start !! 
 
 
 import logging
@@ -34,9 +34,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """
     await context.bot.send_message(chat_id=update.effective_chat.id,
                                    text="Welcome to this ChatBot! 🤖\n"
-                                   "Type /chat to find a match\n"
-                                   "Type /menu to go to menu\n"
-                                   "Type /exit to stop search\n")
+                                   " /chat to find a match\n"
+                                   " /menu to go to menu\n"
+                                   " /exit to stop search\n")
 
     # Insert the user into the database, if not already present (check is done in the function)
     user_id = update.effective_user.id
