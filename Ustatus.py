@@ -5,3 +5,4 @@ class UserStatus:
     PARTNER_LEFT = "partner_left"
 
     possible_states = [COUPLED, IDLE, IN_SEARCH, PARTNER_LEFT]
+
