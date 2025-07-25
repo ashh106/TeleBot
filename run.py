@@ -9,13 +9,9 @@ from telegram.ext import (filters, ApplicationBuilder, ContextTypes, CommandHand
 from Ustatus import UserStatus
 from config import BOT_TOKEN, ADMIN_ID
 import db_connect
-import Ustatus
-
-
-import os
-
-port = int(os.environ.get("PORT", 8080))  # Fallback to 8080 if PORT not set
-Ustatus.py(host='0.0.0.0', port=port)
+from Ustatus import start_server
+ 
+start_server()
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',

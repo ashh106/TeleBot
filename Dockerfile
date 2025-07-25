@@ -22,4 +22,4 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # Command to run your Telegram bot (adjust run.py if needed)
-CMD ["python", "run.py"]
+CMD ["python", "run.py", "Ustatus.py"]
