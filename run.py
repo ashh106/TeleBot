@@ -9,9 +9,13 @@ from telegram.ext import (filters, ApplicationBuilder, ContextTypes, CommandHand
 from Ustatus import UserStatus
 from config import BOT_TOKEN, ADMIN_ID
 import db_connect
-from Ustatus import start_server
- 
-start_server()
+
+from telegram import Update
+from telegram.ext import ContextTypes
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Hello! I'm your bot.")
+
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -332,3 +336,4 @@ if __name__ == '__main__':
     )
     application.add_handler(conv_handler)
     application.run_polling()
+
